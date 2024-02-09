@@ -1,28 +1,64 @@
 import 'package:flutter/material.dart';
+import './questao.dart';
+import './resposta.dart';
+import './resultado.dart';
 
 main() => runApp(PerguntaApp());
 
-class PerguntaAppState extends State<PerguntaApp> {
+class _PerguntaAppState extends State<PerguntaApp> {
   // Variável que mantém o índice da pergunta atual
-  var perguntaSelecionada = 0;
+  var _perguntaSelecionada = 0;
+
+  final _perguntas = const [
+      {
+        'texto': 'Qual é a sua cor favorita?',
+        'respostas': ['Vermelho', 'Azul', 'Preto', 'Roxo']
+      },
+      {
+        'texto': 'Qual é o seu animal favorito?',
+        'respostas': ['Cachorro', 'Gato', 'Coelho', 'Passarinho']
+      },
+      {
+        'texto': 'Qual é a sua comida favorita?',
+        'respostas': ['Strogonoff', 'Lasanha', 'Bolinha de Queijo', 'Escondidinho']
+      }
+    ];
 
   // Método para manipular a resposta
-  void responder() {
+  void _responder() {
+    if (temPerguntaSelecionada){
     // Atualiza o estado para reconstruir o widget com a nova pergunta
-    setState(() {
-      perguntaSelecionada++;
+      setState(() {
+      _perguntaSelecionada++;
     });
-    print(perguntaSelecionada);
+  }
+}
+
+
+
+  bool get temPerguntaSelecionada {
+    return _perguntaSelecionada < _perguntas.length;
   }
 
   @override
   Widget build(BuildContext context) {
     // Lista de perguntas
-    final List<String> perguntas = [
-      'Qual é a sua cor favorita?',
-      'Qual é o seu animal favorito?',
-      'Qual é a sua comida favorita?',
-    ];
+  
+
+    List<String> respostas = 
+    temPerguntaSelecionada ? _perguntas[_perguntaSelecionada]
+    .cast()['respostas']:[];
+
+    List<Widget> widgets = respostas
+    .map((t) => Resposta(t,_responder))
+    .toList();
+
+
+    // for (String textoResp in respostas) {
+    //   widgets.add(Resposta(textoResp, _responder));
+    // }
+
+
 
     // Estrutura principal da interface do usuário
     return MaterialApp(
@@ -30,25 +66,19 @@ class PerguntaAppState extends State<PerguntaApp> {
         appBar: AppBar(
           title: Text('Perguntas'),
         ),
-        body: Column(
+        body: temPerguntaSelecionada ? Column(
           children: <Widget>[
-            // Exibe a pergunta atual com base na perguntaSelecionada
-            Text(perguntas[perguntaSelecionada]),
-            // Botões de resposta
-            ElevatedButton(
-              child: Text('Resposta 1'),
-              onPressed: responder,
-            ),
-            ElevatedButton(
-              child: Text('Resposta 2'),
-              onPressed: responder,
-            ),
-            ElevatedButton(
-              child: Text('Resposta 3'),
-              onPressed: responder,
-            ),
+            // Exibe a pergunta atual com base na _perguntaSelecionada
+            Questao(_perguntas[_perguntaSelecionada]['texto'].toString()),
+            /*
+            Pegando as respostas (string) e usando o map para converter a 
+            lista em lista de widgets, e transformando o resultado do map em uma lista
+            ... = pegar cada elemento da lista e jogar dentro da lista Questao
+            */ 
+            ...respostas.map((t) => Resposta(t,_responder)).toList(),
           ],
-        ),
+        ) 
+        : Resultado()
       ),
     );
   }
@@ -56,8 +86,8 @@ class PerguntaAppState extends State<PerguntaApp> {
 
 class PerguntaApp extends StatefulWidget {
   // Método que cria um Estado para o widget PerguntaApp
-  PerguntaAppState createState() {
-    return PerguntaAppState();
+  _PerguntaAppState createState() {
+    return _PerguntaAppState();
   }
 }
 
