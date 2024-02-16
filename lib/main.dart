@@ -1,40 +1,57 @@
 import 'package:flutter/material.dart';
-import './questao.dart';
-import './resposta.dart';
+import './questionario.dart';
 import './resultado.dart';
 
-main() => runApp(PerguntaApp());
+void main() => runApp(const PerguntaApp());
 
 class _PerguntaAppState extends State<PerguntaApp> {
-  // Variável que mantém o índice da pergunta atual
   var _perguntaSelecionada = 0;
-
+  var _pontuacaoTotal = 0;
   final _perguntas = const [
-      {
-        'texto': 'Qual é a sua cor favorita?',
-        'respostas': ['Vermelho', 'Azul', 'Preto', 'Roxo']
-      },
-      {
-        'texto': 'Qual é o seu animal favorito?',
-        'respostas': ['Cachorro', 'Gato', 'Coelho', 'Passarinho']
-      },
-      {
-        'texto': 'Qual é a sua comida favorita?',
-        'respostas': ['Strogonoff', 'Lasanha', 'Bolinha de Queijo', 'Escondidinho']
-      }
-    ];
+    {
+      'texto': 'Qual é a sua cor favorita?',
+      'respostas': [
+        {'texto': 'Preto', 'pontuacao': 10},
+        {'texto': 'Vermelho', 'pontuacao': 5},
+        {'texto': 'Verde', 'pontuacao': 3},
+        {'texto': 'Branco', 'pontuacao': 1},
+      ],
+    },
+    {
+      'texto': 'Qual é o seu animal favorito?',
+      'respostas': [
+        {'texto': 'Coelho', 'pontuacao': 10},
+        {'texto': 'Cobra', 'pontuacao': 5},
+        {'texto': 'Elefante', 'pontuacao': 3},
+        {'texto': 'Leão', 'pontuacao': 1},
+      ],
+    },
+    {
+      'texto': 'Qual é o seu instrutor favorito?',
+      'respostas': [
+        {'texto': 'Leo', 'pontuacao': 10},
+        {'texto': 'Maria', 'pontuacao': 5},
+        {'texto': 'João', 'pontuacao': 3},
+        {'texto': 'Pedro', 'pontuacao': 1},
+      ],
+    }
+  ];
 
-  // Método para manipular a resposta
-  void _responder() {
-    if (temPerguntaSelecionada){
-    // Atualiza o estado para reconstruir o widget com a nova pergunta
+  void _responder(int pontuacao) {
+    if (temPerguntaSelecionada) {
       setState(() {
-      _perguntaSelecionada++;
+        _perguntaSelecionada++;
+        _pontuacaoTotal += pontuacao;
+      });
+    }
+  }
+
+  void _reiniciarQuestionario() {
+    setState(() {
+      _perguntaSelecionada = 0;
+      _pontuacaoTotal = 0;
     });
   }
-}
-
-
 
   bool get temPerguntaSelecionada {
     return _perguntaSelecionada < _perguntas.length;
@@ -42,53 +59,28 @@ class _PerguntaAppState extends State<PerguntaApp> {
 
   @override
   Widget build(BuildContext context) {
-    // Lista de perguntas
-  
-
-    List<String> respostas = 
-    temPerguntaSelecionada ? _perguntas[_perguntaSelecionada]
-    .cast()['respostas']:[];
-
-    List<Widget> widgets = respostas
-    .map((t) => Resposta(t,_responder))
-    .toList();
-
-
-    // for (String textoResp in respostas) {
-    //   widgets.add(Resposta(textoResp, _responder));
-    // }
-
-
-
-    // Estrutura principal da interface do usuário
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Perguntas'),
+          title: const Text('Perguntas'),
         ),
-        body: temPerguntaSelecionada ? Column(
-          children: <Widget>[
-            // Exibe a pergunta atual com base na _perguntaSelecionada
-            Questao(_perguntas[_perguntaSelecionada]['texto'].toString()),
-            /*
-            Pegando as respostas (string) e usando o map para converter a 
-            lista em lista de widgets, e transformando o resultado do map em uma lista
-            ... = pegar cada elemento da lista e jogar dentro da lista Questao
-            */ 
-            ...respostas.map((t) => Resposta(t,_responder)).toList(),
-          ],
-        ) 
-        : Resultado()
+        body: temPerguntaSelecionada
+            ? Questionario(
+                perguntas: _perguntas,
+                perguntaSelecionada: _perguntaSelecionada,
+                quandoResponder: _responder,
+              )
+            : Resultado(_pontuacaoTotal, _reiniciarQuestionario),
       ),
     );
   }
 }
 
 class PerguntaApp extends StatefulWidget {
-  // Método que cria um Estado para o widget PerguntaApp
+  const PerguntaApp({super.key});
+
+  @override
   _PerguntaAppState createState() {
     return _PerguntaAppState();
   }
 }
-
-// Alguns componentes recebem mais de um widget, como listas
