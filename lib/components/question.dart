@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class Questao extends StatelessWidget {
-  final String texto;
+class Question extends StatelessWidget {
+  final String text;
 
-  const Questao(this.texto, {super.key});
+  const Question(this.text, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +11,7 @@ class Questao extends StatelessWidget {
       width: double.infinity,
       margin: const EdgeInsets.all(10),
       child: Text(
-        texto,
+        text,
         style: const TextStyle(fontSize: 28),
         textAlign: TextAlign.center,
       ),

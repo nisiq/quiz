@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
 
-class Resultado extends StatelessWidget {
-  final int pontuacao;
+class Result extends StatelessWidget {
+  final int score;
 
-  final void Function() quandoReiniciarQuestionario;
+  final void Function() whenStartQuestionnaire;
 
-  const Resultado(this.pontuacao, this.quandoReiniciarQuestionario);
+  const Result(this.score, this.whenStartQuestionnaire);
 
-  String get fraseResultado {
-    if (pontuacao < 8) {
-      return 'Parabéns';
-    } else if (pontuacao < 12) {
-      return 'Você é bom!';
-    } else if (pontuacao < 16) {
-      return 'Impressionante!';
+  String get resultphrase {
+    if (score < 1) {
+      return 'I hate you!';
+    } else if (score < 12) {
+      return 'You dont know me that well! :(';
     } else {
-      return 'Perfeito!';
+      return 'You really know me <3';
     }
   }
 
@@ -26,16 +24,16 @@ class Resultado extends StatelessWidget {
       children: <Widget>[
         Center(
           child: Text(
-            fraseResultado,
+            resultphrase,
             style: const TextStyle(fontSize: 28,
             ),
           ),
         ),
         TextButton(
-          child: Text('Reiniciar?',
+          child: Text('Restart?',
           style: TextStyle(fontSize: 18)),
           style: ButtonStyle(foregroundColor: MaterialStateProperty.all(Colors.red)),
-          onPressed: quandoReiniciarQuestionario,
+          onPressed: whenStartQuestionnaire,
         )
       ],
     );
